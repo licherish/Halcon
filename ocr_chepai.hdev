@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="19.05.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Chepai1, 'E:/5_test_images/halcon/chepai_1.png')</l>
+<c></c>
+<l>decompose3 (Chepai1, Red, Green, Blue)</l>
+<l>trans_from_rgb (Red, Green, Blue, ImageResult1, ImageResult2, ImageResult3, 'hsv')</l>
+<c></c>
+<l>threshold (ImageResult2, Regions, 238, 255)</l>
+<c></c>
+<l>opening_rectangle1 (Regions, RegionOpening, 2, 2)</l>
+<c></c>
+<l>fill_up (RegionOpening, RegionFillUp)</l>
+<c></c>
+<l>closing_circle (RegionFillUp, RegionClosing, 8)</l>
+<c></c>
+<l>connection (RegionClosing, ConnectedRegions)</l>
+<c></c>
+<l>select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', 6237.46, 15033.4)</l>
+<c></c>
+<l>shape_trans (SelectedRegions, RegionTrans, 'convex')</l>
+<c></c>
+<c></c>
+<l>orientation_region (RegionTrans, Phi)</l>
+<c></c>
+<l>area_center (RegionTrans, Area, Row, Column)</l>
+<c></c>
+<l>vector_angle_to_rigid (Row, Column, Phi, Row, Column, rad(180), HomMat2D)</l>
+<c></c>
+<l>#affine仿射变换有问题</l>
+<l>affine_trans_image (Chepai1, ImageAffineTrans, HomMat2D, 'constant', 'false')</l>
+<c></c>
+<l>reduce_domain (Chepai1, ImageAffineTrans, ImageReduced)</l>
+<c></c>
+<c></c>
+<l>invert_image (ImageReduced, ImageInvert)</l>
+<c></c>
+<l>rgb1_to_gray (ImageReduced, GrayImage)</l>
+<l>threshold (GrayImage, Regions2, 131, 255)</l>
+<c></c>
+<c></c>
+<l>connection (Regions2, ConnectedRegions1)</l>
+<l>select_shape (ConnectedRegions1, SelectedRegions2, ['area','width','height'], 'and', [409.7,0,43.562], [1279.26,45.99,52.425])</l>
+<c></c>
+<c></c>
+<l>sort_region (SelectedRegions2, SortedRegions, 'character', 'true', 'row')</l>
+<c></c>
+<l>read_ocr_class_mlp ('Industrial_0-9A-Z_NoRej.omc', OCRHandle)</l>
+<c></c>
+<l>do_ocr_multi_class_mlp (SortedRegions, ImageInvert, OCRHandle, Class, Confidence)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
